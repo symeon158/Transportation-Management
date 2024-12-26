@@ -28,4 +28,27 @@ This project optimizes truck logistics using Google Sheets, Google Maps, and Ope
 ## Setup Guide
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/Truck-Transportation-Management.git
+   git clone https://github.com/your-username/Truck-Transportation-Management.git 
+
+Truck-Transportation-Management/
+│
+├── README.md
+├── LICENSE
+├── src/
+│   ├── GOOGLEMAPS.js
+│   ├── onEdit.js
+│   ├── addTimestamps.js
+│   ├── fillDownFormula.js
+│   ├── WeatherTemp.js
+│   ├── ClearData.js
+│   ├── pasteData.js
+│   ├── getLastRowSpecial.js
+│
+├── docs/
+│   ├── API_Setup.md
+│   ├── Google_Sheets_Setup.md
+│
+└── media/
+    ├── demo_video.mp4
+    └── screenshots/
+
