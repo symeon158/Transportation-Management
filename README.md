@@ -25,30 +25,50 @@ This project optimizes truck logistics using Google Sheets, Google Maps, and Ope
 - OpenWeather API
 - Google Apps Script enabled in Google Workspace
 
-## Setup Guide
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/Truck-Transportation-Management.git 
 
-Truck-Transportation-Management/
-│
-├── README.md
-├── LICENSE
-├── src/
-│   ├── GOOGLEMAPS.js
-│   ├── onEdit.js
-│   ├── addTimestamps.js
-│   ├── fillDownFormula.js
-│   ├── WeatherTemp.js
-│   ├── ClearData.js
-│   ├── pasteData.js
-│   ├── getLastRowSpecial.js
-│
-├── docs/
-│   ├── API_Setup.md
-│   ├── Google_Sheets_Setup.md
-│
-└── media/
-    ├── demo_video.mp4
-    └── screenshots/
+
+---
+
+## Requirements
+- Google Sheets
+- Google Maps API
+- OpenWeather API
+- Google Apps Script enabled in Google Workspace
+
+---
+
+## Code Explanations
+
+### `/src/GOOGLEMAPS.js`
+This function calculates the distance or travel time between two addresses using the Google Maps API.
+```javascript
+/**
+ * Get Distance between 2 different addresses using Google Maps API.
+ * 
+ * @param {string} start_address - Starting address.
+ * @param {string} end_address - Ending address.
+ * @param {string} return_type - Return type: "miles", "kilometers", "minutes", "hours".
+ * @return {number|string} - The calculated distance or duration, or an error message.
+ */
+function GOOGLEMAPS(start_address, end_address, return_type) {
+  var mapObj = Maps.newDirectionFinder();
+  mapObj.setOrigin(start_address);
+  mapObj.setDestination(end_address);
+  var directions = mapObj.getDirections();
+  var getTheLeg = directions["routes"][0]["legs"][0];
+  var meters = getTheLeg["distance"]["value"];
+
+  switch (return_type) {
+    case "miles":
+      return meters * 0.000621371;
+    case "minutes":
+      return getTheLeg["duration"]["value"] / 60;
+    case "hours":
+      return getTheLeg["duration"]["value"] / 60 / 60;
+    case "kilometers":
+      return meters / 1000;
+    default:
+      return "Error: Wrong Unit Type";
+  }
+}
 
