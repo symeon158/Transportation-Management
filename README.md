@@ -29,14 +29,6 @@ This project optimizes truck logistics using Google Sheets, Google Maps, and Ope
 
 ---
 
-## Requirements
-- Google Sheets
-- Google Maps API
-- OpenWeather API
-- Google Apps Script enabled in Google Workspace
-
----
-
 ## Code Explanations
 
 ### `/src/GOOGLEMAPS.js`
