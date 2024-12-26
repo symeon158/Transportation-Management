@@ -72,3 +72,88 @@ function GOOGLEMAPS(start_address, end_address, return_type) {
   }
 }
 
+/**
+ * Handles Google Sheets onEdit events.
+ * Calls other functions for adding timestamps and filling formulas.
+ */
+function onEdit(e) {
+  addTimestamps(e);
+  fillDownFormula(e);
+}
+
+/**
+ * Adds timestamps to specific cells when edited in the "Routes" sheet.
+ * 
+ * @param {Object} e - The onEdit event object.
+ */
+function addTimestamps(e) {
+  var row = e.range.getRow();
+  var col = e.range.getColumn();
+  var sheet = e.source.getActiveSheet();
+
+  if (sheet.getName() === "Routes" && row > 10) {
+    if (col === 2) {
+      sheet.getRange(row, 9).setValue(new Date());
+    } else if (col === 12) {
+      sheet.getRange(row, 11).setValue(new Date());
+    }
+
+    if (sheet.getRange(row, 2).getValue() === "") {
+      sheet.getRange(row, 9).setValue("");
+    }
+
+    if (sheet.getRange(row, 12).getValue() === "") {
+      sheet.getRange(row, 11).setValue("");
+    }
+  }
+}
+
+/**
+ * Automatically fills down formulas in the "PasteData" sheet.
+ * 
+ * @param {Object} e - The onEdit event object.
+ */
+function fillDownFormula(e) {
+  var sc = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("PasteData");
+  if (!sc) return;
+
+  sc.getRange("L2").setFormula("=K2-F2");
+  var lastRow = sc.getLastRow();
+  var fillDown = sc.getRange(2, 12, lastRow - 1);
+  sc.getRange("L2").copyTo(fillDown);
+}
+
+/**
+ * Fetches and updates weather data in the "Routes" sheet using the OpenWeather API.
+ */
+function WeatherTemp() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Routes");
+  var sd = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
+  var col = ss.getActiveCell().getColumn();
+  var cell = ss.getActiveCell().getRow();
+
+  if (col === 4 && cell > 10 && ss.getSheetName() === "Routes") {
+    const key = "YOUR_API_KEY";
+    const units = sd.getRange("I3").getValue();
+    const loc = ss.getRange(cell, 4).offset(0, 1).getValue();
+
+    const low = ss.getRange(cell, 14);
+    const high = ss.getRange(cell, 15);
+    const weatherDesc = ss.getRange(cell, 16);
+
+    if (ss.getRange(cell, 4).isBlank()) {
+      low.clearContent();
+      high.clearContent();
+      weatherDesc.clearContent();
+    } else {
+      let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${loc}&appid=${key}&units=${units}`;
+      const response = UrlFetchApp.fetch(apiUrl);
+      const data = JSON.parse(response.getContentText());
+
+      low.setValue(data.main.temp_min);
+      high.setValue(data.main.temp_max);
+      weatherDesc.setValue(data.weather[0].description);
+    }
+  }
+}
+
